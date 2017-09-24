@@ -62,7 +62,7 @@ class Humidity(db.Model):
         if latitude < -90.0 or latitude > 90.0:
             raise LatitudeValueError('latitude out of range (-90 to 90)')
 
-        if longitude < -180.0 or longitude > 180:
+        if longitude < -180.0 or longitude > 180.0:
             raise LongitudeValueError('longitude out of range (-90 to 90)')
 
         if id is not None:
@@ -181,7 +181,7 @@ class Pressure(db.Model):
         if latitude < -90.0 or latitude > 90.0:
             raise LatitudeValueError('latitude out of range (-90 to 90)')
 
-        if longitude < -180.0 or longitude > 180:
+        if longitude < -180.0 or longitude > 180.0:
             raise LongitudeValueError('longitude out of range (-90 to 90)')
 
         if id is not None:
@@ -302,7 +302,7 @@ class Temperature(db.Model):
         if latitude < -90.0 or latitude > 90.0:
             raise LatitudeValueError('latitude out of range (-90 to 90)')
 
-        if longitude < -180.0 or longitude > 180:
+        if longitude < -180.0 or longitude > 180.0:
             raise LongitudeValueError('longitude out of range (-90 to 90)')
 
         if id is not None:
