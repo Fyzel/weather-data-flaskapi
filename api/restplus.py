@@ -18,7 +18,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 log = logging.getLogger(__name__)
 
-api = Api(version='1.0',
+api = Api(version='1.1',
           title='Weather Data API',
           description='A simple weather data API')
 

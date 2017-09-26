@@ -4,6 +4,6 @@ db = SQLAlchemy()
 
 
 def reset_database():
-    from database.models import Humidity, Pressure, Temperature, User
+    from database.models import ProtectedHumidity, ProtectedPressure, ProtectedTemperature, User
     db.drop_all()
     db.create_all()

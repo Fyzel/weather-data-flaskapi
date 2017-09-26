@@ -9,22 +9,23 @@ from api.restplus import api
 from api.weather_data_api.business.weather_data import create_pressure, delete_pressure, update_pressure
 from api.weather_data_api.serializers import pressure
 from database.model_exceptions import LatitudeValueError, LongitudeValueError
-from database.models import Pressure
+from database.models import ProtectedPressure
 
 log = logging.getLogger(__name__)
 
-ns = api.namespace('pressures',
+ns = api.namespace('ProtectedPressureData',
                    description='Operations related to pressure readings')
 
 
 @ns.route('/')
-class PressureCollection(Resource):
+class ProtectedPressureCollection(Resource):
     @api.marshal_list_with(pressure)
     @api.doc(params={'start': 'The required start date (e.g. 2017-01-30) for the returned records.'})
     @api.doc(params={'end': 'The required end date (e.g. 2017-01-30) for the returned records.'})
+    @jwt_required()
     def get(self):
         """
-        Returns list of pressure records.
+        Returns list of protected pressure records.
         :return:
         """
         parser = reqparse.RequestParser(bundle_errors=True)
@@ -34,12 +35,12 @@ class PressureCollection(Resource):
         start = args['start']
         end = args['end']
 
-        pressures = Pressure.query.filter(
-            and_(Pressure.timestamp >= start, Pressure.timestamp <= end)).order_by(Pressure.timestamp).all()
+        protected_records = ProtectedPressure.query.filter(
+            and_(ProtectedPressure.timestamp >= start, ProtectedPressure.timestamp <= end)).order_by(ProtectedPressure.timestamp).all()
 
-        return pressures
+        return protected_records
 
-    @api.response(201, 'Pressure successfully created.')
+    @api.response(201, 'ProtectedPressure successfully created.')
     @api.expect(pressure)
     @api.marshal_with(pressure)
     @jwt_required()
@@ -61,20 +62,21 @@ class PressureCollection(Resource):
 
 
 @ns.route('/<int:pressure_id>')
-@api.response(404, 'Pressure not found.')
-class PressureItem(Resource):
+@api.response(404, 'ProtectedPressure not found.')
+class ProtectedPressureItem(Resource):
     @api.marshal_with(pressure)
+    @jwt_required()
     def get(self, pressure_id: int):
         """
-        Returns a pressure record.
+        Returns a protected pressure record.
         :param pressure_id: The unique identifier of the pressure record.
         :type pressure_id: int
         :return:
         """
-        return Pressure.query.filter(Pressure.id == pressure_id).one()
+        return ProtectedPressure.query.filter(ProtectedPressure.id == pressure_id).one()
 
     @api.expect(pressure)
-    @api.response(204, 'Pressure successfully updated.')
+    @api.response(204, 'ProtectedPressure successfully updated.')
     @api.marshal_with(pressure)
     @jwt_required()
     def put(self, pressure_id: int):
@@ -90,11 +92,16 @@ class PressureItem(Resource):
             "value": 14.4924,
             "value_units": "Pa",
             "value_error_range": 0.192573,
-            "timestamp": "0525-05-07T21:46:04",
-            "elevation": "66166.1257",
-            "elevation_units": "m",
             "latitude": 54.788803,
-            "longitude": -5.176766
+            "latitude_public": 54.788,
+            "longitude": -5.176766,
+            "longitude_public": -5.176,
+            "city": "Toronto",
+            "province": "ON",
+            "country": "CA",
+            "elevation": 66166.1257,
+            "elevation_units": "m",
+            "timestamp": "0525-05-07T21:46:04"
         }
         ```
 
@@ -113,7 +120,7 @@ class PressureItem(Resource):
 
         return data, 204
 
-    @api.response(204, 'Pressure successfully deleted.')
+    @api.response(204, 'ProtectedPressure successfully deleted.')
     @jwt_required()
     def delete(self, pressure_id: int):
         """

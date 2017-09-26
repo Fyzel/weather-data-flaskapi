@@ -9,22 +9,23 @@ from api.restplus import api
 from api.weather_data_api.business.weather_data import create_humidity, delete_humidity, update_humidity
 from api.weather_data_api.serializers import humidity
 from database.model_exceptions import LatitudeValueError, LongitudeValueError
-from database.models import Humidity
+from database.models import ProtectedHumidity
 
 log = logging.getLogger(__name__)
 
-ns = api.namespace('humidities',
+ns = api.namespace('ProtectedHumidityData',
                    description='Operations related to humidity readings')
 
 
 @ns.route('/')
-class HumidityCollection(Resource):
+class ProtectedHumidityCollection(Resource):
     @api.marshal_list_with(humidity)
     @api.doc(params={'start': 'The required start date (e.g. 2017-01-30) for the returned records.'})
     @api.doc(params={'end': 'The required end date (e.g. 2017-01-30) for the returned records.'})
+    @jwt_required()
     def get(self):
         """
-        Returns list of humidity records.
+        Returns list of protected humidity records.
         :return:
         """
         parser = reqparse.RequestParser(bundle_errors=True)
@@ -34,12 +35,12 @@ class HumidityCollection(Resource):
         start = args['start']
         end = args['end']
 
-        humidities = Humidity.query.filter(
-            and_(Humidity.timestamp >= start, Humidity.timestamp <= end)).order_by(Humidity.timestamp).all()
+        protected_records = ProtectedHumidity.query.filter(
+            and_(ProtectedHumidity.timestamp >= start, ProtectedHumidity.timestamp <= end)).order_by(ProtectedHumidity.timestamp).all()
 
-        return humidities
+        return protected_records
 
-    @api.response(201, 'Humidity successfully created.')
+    @api.response(201, 'ProtectedHumidity successfully created.')
     @api.expect(humidity)
     @api.marshal_with(humidity)
     @jwt_required()
@@ -61,20 +62,21 @@ class HumidityCollection(Resource):
 
 
 @ns.route('/<int:humidity_id>')
-@api.response(404, 'Humidity not found.')
-class HumidityItem(Resource):
+@api.response(404, 'ProtectedHumidity not found.')
+class ProtectedHumidityItem(Resource):
     @api.marshal_with(humidity)
+    @jwt_required()
     def get(self, humidity_id: int):
         """
-        Returns a humidity record.
+        Returns a protected humidity record.
         :param humidity_id: The unique identifier of the humidity record.
         :type humidity_id: int
         :return:
         """
-        return Humidity.query.filter(Humidity.id == humidity_id).one()
+        return ProtectedHumidity.query.filter(ProtectedHumidity.id == humidity_id).one()
 
     @api.expect(humidity)
-    @api.response(204, 'Humidity successfully updated.')
+    @api.response(204, 'ProtectedHumidity successfully updated.')
     @api.marshal_with(humidity)
     @jwt_required()
     def put(self, humidity_id: int):
@@ -90,11 +92,16 @@ class HumidityItem(Resource):
             "value": 14.4924,
             "value_units": "RH",
             "value_error_range": 0.192573,
-            "timestamp": "0525-05-07T21:46:04",
-            "elevation": "66166.1257",
-            "elevation_units": "m",
             "latitude": 54.788803,
-            "longitude": -5.176766
+            "latitude_public": 54.788,
+            "longitude": -5.176766,
+            "longitude_public": -5.176,
+            "city": "Toronto",
+            "province": "ON",
+            "country": "CA",
+            "elevation": 66166.1257,
+            "elevation_units": "m",
+            "timestamp": "0525-05-07T21:46:04"
         }
         ```
 
@@ -112,7 +119,7 @@ class HumidityItem(Resource):
             abort(400, 'Bad request: longitude out of range (-180 to 180)')
         return data, 204
 
-    @api.response(204, 'Humidity successfully deleted.')
+    @api.response(204, 'ProtectedHumidity successfully deleted.')
     @jwt_required()
     def delete(self, humidity_id: int):
         """

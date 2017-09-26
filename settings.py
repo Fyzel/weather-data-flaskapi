@@ -11,5 +11,5 @@ RESTPLUS_MASK_SWAGGER = False
 RESTPLUS_ERROR_404_HELP = False
 
 # SQLAlchemy settings - change the SQLALCHEMY_DATABASE_URI to the appropriate values for your database
-SQLALCHEMY_DATABASE_URI = 'mysql://weather-api:secret@localhost/weather_api?charset=utf8'
+SQLALCHEMY_DATABASE_URI = 'mysql://weather-api:secret@192.168.129.195/Weather?charset=utf8'
 SQLALCHEMY_TRACK_MODIFICATIONS = False

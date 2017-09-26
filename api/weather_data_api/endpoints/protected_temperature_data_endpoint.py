@@ -9,22 +9,23 @@ from api.restplus import api
 from api.weather_data_api.business.weather_data import create_temperature, delete_temperature, update_temperature
 from api.weather_data_api.serializers import temperature
 from database.model_exceptions import LatitudeValueError, LongitudeValueError
-from database.models import Temperature
+from database.models import ProtectedTemperature
 
 log = logging.getLogger(__name__)
 
-ns = api.namespace('temperatures',
+ns = api.namespace('ProtectedTemperatureData',
                    description='Operations related to temperature readings')
 
 
 @ns.route('/')
-class TemperatureCollection(Resource):
+class ProtectedTemperatureCollection(Resource):
     @api.marshal_list_with(temperature)
     @api.doc(params={'start': 'The required start date (e.g. 2017-01-30) for the returned records.'})
     @api.doc(params={'end': 'The required end date (e.g. 2017-01-30) for the returned records.'})
+    @jwt_required()
     def get(self):
         """
-        Returns list of temperature records.
+        Returns list of protected temperature records.
         :return:
         """
         parser = reqparse.RequestParser(bundle_errors=True)
@@ -34,12 +35,12 @@ class TemperatureCollection(Resource):
         start = args['start']
         end = args['end']
 
-        temperatures = Temperature.query.filter(
-            and_(Temperature.timestamp >= start, Temperature.timestamp <= end)).order_by(Temperature.timestamp).all()
+        protected_records = ProtectedTemperature.query.filter(
+            and_(ProtectedTemperature.timestamp >= start, ProtectedTemperature.timestamp <= end)).order_by(ProtectedTemperature.timestamp).all()
 
-        return temperatures
+        return protected_records
 
-    @api.response(201, 'Temperature successfully created.')
+    @api.response(201, 'ProtectedTemperature successfully created.')
     @api.expect(temperature)
     @api.marshal_with(temperature)
     @jwt_required()
@@ -60,20 +61,21 @@ class TemperatureCollection(Resource):
 
 
 @ns.route('/<int:temperature_id>')
-@api.response(404, 'Temperature not found.')
-class TemperatureItem(Resource):
+@api.response(404, 'ProtectedTemperature not found.')
+class ProtectedTemperatureItem(Resource):
     @api.marshal_with(temperature)
+    @jwt_required()
     def get(self, temperature_id: int):
         """
-        Returns a temperature record.
+        Returns a protected temperature record.
         :param temperature_id: The unique identifier of the temperature record.
         :type temperature_id: int
         :return:
         """
-        return Temperature.query.filter(Temperature.id == temperature_id).one()
+        return ProtectedTemperature.query.filter(ProtectedTemperature.id == temperature_id).one()
 
     @api.expect(temperature)
-    @api.response(204, 'Temperature successfully updated.')
+    @api.response(204, 'ProtectedTemperature successfully updated.')
     @api.marshal_with(temperature)
     @jwt_required()
     def put(self, temperature_id: int):
@@ -87,13 +89,18 @@ class TemperatureItem(Resource):
         ```
         {
             "value": 14.4924,
-            "value_units": "RH",
+            "value_units": "C",
             "value_error_range": 0.192573,
-            "timestamp": "0525-05-07T21:46:04",
-            "elevation": "66166.1257",
-            "elevation_units": "m",
             "latitude": 54.788803,
-            "longitude": -5.176766
+            "latitude_public": 54.788,
+            "longitude": -5.176766,
+            "longitude_public": -5.176,
+            "city": "Toronto",
+            "province": "ON",
+            "country": "CA",
+            "elevation": 66166.1257,
+            "elevation_units": "m",
+            "timestamp": "0525-05-07T21:46:04"
         }
         ```
 
@@ -112,7 +119,7 @@ class TemperatureItem(Resource):
 
         return data, 204
 
-    @api.response(204, 'Temperature successfully deleted.')
+    @api.response(204, 'ProtectedTemperature successfully deleted.')
     @jwt_required()
     def delete(self, temperature_id: int):
         """

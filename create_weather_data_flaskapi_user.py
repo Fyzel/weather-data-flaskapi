@@ -35,7 +35,7 @@ __short_description__ = 'create a weather data api user'
 __longer_description__ = 'a command line utility to create a new user in the application''s database'
 __org_name__ = 'Englesh.org'
 __email__ = 'Fyzel@users.noreply.github.com'
-__license__ = 'https://github.com/Fyzel/weather-data-api/blob/master/LICENSE'
+__license__ = 'https://github.com/Fyzel/weather-data-flaskapi/blob/master/LICENSE'
 
 DEBUG = False
 TEST_RUN = False
@@ -163,7 +163,7 @@ USAGE
         engine = create_engine(SQLALCHEMY_DATABASE_URI, echo=True)
 
         metadata = MetaData()
-        users = Table('users', metadata,
+        user = Table('user', metadata,
                       Column('id', Integer, primary_key=True, autoincrement=True),
                       Column('username', NVARCHAR(length=64), nullable=False),
                       Column('password', NVARCHAR(length=120), nullable=False),
@@ -173,8 +173,8 @@ USAGE
 
         conn = engine.connect()
 
-        if not check_if_username_exists(conn, users, username):
-            create_user(conn, users, username, hashed_password, enable)
+        if not check_if_username_exists(conn, user, username):
+            create_user(conn, user, username, hashed_password, enable)
 
         conn.close()
 
