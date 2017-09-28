@@ -19,6 +19,7 @@ It defines the methods to create a user with an encrypted and hashed password.
 
 import os
 import sys
+import uuid
 from argparse import ArgumentParser
 from argparse import RawDescriptionHelpFormatter
 
@@ -26,9 +27,10 @@ from passlib.hash import sha512_crypt
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, NVARCHAR, BOOLEAN, DATETIME, select
 
 from settings import SQLALCHEMY_DATABASE_URI
+from api.weather_data_api.business.security import salt_password
 
 __all__ = []
-__version__ = 1.0
+__version__ = 1.1
 __date__ = '2017-06-14'
 __updated__ = '2017-06-14'
 __short_description__ = 'create a weather data api user'
@@ -55,20 +57,22 @@ class CLIError(Exception):
         return self.message
 
 
-def create_user(db_connection, user_table, username, hashed_password, enable) -> None:
+def create_user(db_connection, user_table, username, hashed_password, salt, enable) -> None:
     """
 
     :param db_connection:
     :param user_table:
     :param username:
     :param hashed_password:
+    :param salt:
     :param enable:
     :return None:
     """
     insert = user_table.insert().values(
         username=username,
         password=hashed_password,
-        enabled=enable)
+        enabled=enable,
+        salt=salt)
 
     db_connection.execute(insert)
 
@@ -150,6 +154,7 @@ USAGE
 
         username = args.username
         password = args.password
+        salt = str(uuid.uuid4())
         enable = args.enable
 
         if len(username) < 1 or len(username) > 64:
@@ -158,23 +163,29 @@ USAGE
         if len(password) < 1 or len(password) > 256:
             raise CLIError('password must be between 1 to 256 characters')
 
-        hashed_password = sha512_crypt.hash(password)
+        hashed_password = sha512_crypt.hash(salt_password(password, salt))
 
         engine = create_engine(SQLALCHEMY_DATABASE_URI, echo=True)
 
         metadata = MetaData()
         user = Table('user', metadata,
-                      Column('id', Integer, primary_key=True, autoincrement=True),
-                      Column('username', NVARCHAR(length=64), nullable=False),
-                      Column('password', NVARCHAR(length=120), nullable=False),
-                      Column('enabled', BOOLEAN, nullable=False, default=True),
-                      Column('created_date', DATETIME, nullable=False),
-                      Column('last_login_date', DATETIME, nullable=True))
+                     Column('id', Integer, primary_key=True, autoincrement=True),
+                     Column('username', NVARCHAR(length=64), nullable=False),
+                     Column('password', NVARCHAR(length=120), nullable=False),
+                     Column('salt', NVARCHAR(length=64), nullable=False),
+                     Column('enabled', BOOLEAN, nullable=False, default=True),
+                     Column('created_date', DATETIME, nullable=False),
+                     Column('last_login_date', DATETIME, nullable=True))
 
         conn = engine.connect()
 
         if not check_if_username_exists(conn, user, username):
-            create_user(conn, user, username, hashed_password, enable)
+            create_user(db_connection=conn,
+                        user_table=user,
+                        username=username,
+                        hashed_password=hashed_password,
+                        salt=salt,
+                        enable=enable)
 
         conn.close()
 

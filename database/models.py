@@ -738,6 +738,7 @@ class User(db.Model):
     id = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     username = db.Column(db.NVARCHAR(64), nullable=False)
     password = db.Column(db.NVARCHAR(120), nullable=False)
+    salt = db.Column(db.NVARCHAR(64), nullable=False)
     enabled = db.Column(db.BOOLEAN, nullable=False)
     created_date = db.Column(db.DATETIME, nullable=False, default=datetime.utcnow())
     last_login_date = db.Column(db.DATETIME, nullable=True)
@@ -745,6 +746,7 @@ class User(db.Model):
     def __init__(self,
                  username: str,
                  password: str,
+                 salt: str,
                  enabled: bool,
                  created_date: datetime = None,
                  last_login_date: datetime = None,
@@ -756,6 +758,8 @@ class User(db.Model):
         :type username: str
         :param password: The user's SHA256 encrypted password.
         :type password: str
+        :param salt: The user's salt.
+        :type salt: str
         :param enabled: Boolean indicating if the user is enabled for login.
         :type enabled: bool
         :param created_date: The date and time the user's account was created.
@@ -771,6 +775,7 @@ class User(db.Model):
             self.id = id
         self.username = username
         self.password = password
+        self.salt = salt
         self.enabled = enabled
         self.created_date = created_date
         self.last_login_date = last_login_date

@@ -24,6 +24,10 @@ class PasswordException(Exception):
         self.message = message
 
 
+def salt_password(password, salt):
+    return '%s%s' % (password, salt)
+
+
 def authenticate(username: str, password: str):
     """
     Authenticate a user using their username and a supplied password.
@@ -37,7 +41,9 @@ def authenticate(username: str, password: str):
     try:
         user = User.query.filter(and_(User.username == username, User.enabled == 1)).one()
 
-        if user.enabled and sha512_crypt.verify(password, user.password):
+        if user.enabled and sha512_crypt.verify(
+                salt_password(password, user.salt),
+                user.password):
             update_last_login_date(username=username)
             return user
         else:
@@ -73,12 +79,12 @@ def create_user(data):
     enabled = data.get('enabled')
 
     if username_is_available(username):
-        salt = uuid.uuid4()
-        encrypted_password = sha512_crypt.hash(password)
-        enabled = False
+        salt = str(uuid.uuid4())
+        encrypted_password = sha512_crypt.hash(salt_password(password, salt))
 
         user = User(username=username,
                     password=encrypted_password,
+                    salt=salt,
                     enabled=enabled)
         db.session.add(user)
         db.session.commit()
@@ -148,7 +154,7 @@ def update_last_login_date(username: str) -> User:
     return user
 
 
-def update_password(username: str, password: str, new_password: str) -> User:
+def update_password(username: str, password: str, new_password: str, salt: str) -> User:
     """
     Update a user's password.
 
@@ -158,12 +164,14 @@ def update_password(username: str, password: str, new_password: str) -> User:
     :type password: str
     :param new_password: The user's new password.
     :type new_password: str
+    :param salt: The user's salt.
+    :type salt: str
     :return: User
     """
     user = User.query.filter(User.username == username).one()
 
-    if sha512_crypt.verify(password, user.password):
-        user.password = sha512_crypt.hash(password)
+    if sha512_crypt.verify(salt_password(password, salt), user.password):
+        user.password = sha512_crypt.hash(salt_password(password, salt))
         db.session.add(user)
         db.session.commit()
 
