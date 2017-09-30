@@ -47,7 +47,8 @@ class ProtectedPressureCollection(Resource):
         end = args['end']
 
         protected_records = ProtectedPressure.query.filter(
-            and_(ProtectedPressure.timestamp >= start, ProtectedPressure.timestamp <= end)).order_by(ProtectedPressure.timestamp).all()
+            and_(ProtectedPressure.timestamp >= start,
+                 ProtectedPressure.timestamp <= end)).order_by(ProtectedPressure.timestamp).all()
 
         return protected_records
 

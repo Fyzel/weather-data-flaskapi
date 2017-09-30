@@ -21,7 +21,8 @@ import settings
 from api.weather_data_flaskapi.business.security import authenticate, identity
 from api.weather_data_flaskapi.endpoints.protected_humidity_data_endpoint import ns as protected_humidity_namespace
 from api.weather_data_flaskapi.endpoints.protected_pressure_data_endpoint import ns as protected_pressure_namespace
-from api.weather_data_flaskapi.endpoints.protected_temperature_data_endpoint import ns as protected_temperature_namespace
+from api.weather_data_flaskapi.endpoints.protected_temperature_data_endpoint import ns as \
+    protected_temperature_namespace
 from api.weather_data_flaskapi.endpoints.public_humidity_data_endpoint import ns as public_humidity_namespace
 from api.weather_data_flaskapi.endpoints.public_pressure_data_endpoint import ns as public_pressure_namespace
 from api.weather_data_flaskapi.endpoints.public_temperature_data_endpoint import ns as public_temperature_namespace
@@ -29,8 +30,8 @@ from database import db
 
 
 def create_app():
-    app = Flask(__name__)
-    return app
+    flask_app = Flask(__name__)
+    return flask_app
 
 
 def configure_app(flask_app):

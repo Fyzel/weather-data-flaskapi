@@ -47,7 +47,8 @@ class ProtectedTemperatureCollection(Resource):
         end = args['end']
 
         protected_records = ProtectedTemperature.query.filter(
-            and_(ProtectedTemperature.timestamp >= start, ProtectedTemperature.timestamp <= end)).order_by(ProtectedTemperature.timestamp).all()
+            and_(ProtectedTemperature.timestamp >= start,
+                 ProtectedTemperature.timestamp <= end)).order_by(ProtectedTemperature.timestamp).all()
 
         return protected_records
 

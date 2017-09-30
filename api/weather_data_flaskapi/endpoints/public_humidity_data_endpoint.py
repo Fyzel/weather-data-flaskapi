@@ -42,7 +42,8 @@ class HumidityPublicCollection(Resource):
         end = args['end']
 
         public_humidity_records = PublicHumidity.query.filter(
-            and_(PublicHumidity.timestamp >= start, PublicHumidity.timestamp <= end)).order_by(PublicHumidity.timestamp).all()
+            and_(PublicHumidity.timestamp >= start,
+                 PublicHumidity.timestamp <= end)).order_by(PublicHumidity.timestamp).all()
 
         return public_humidity_records
 

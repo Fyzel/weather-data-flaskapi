@@ -42,7 +42,8 @@ class PublicPressureCollection(Resource):
         end = args['end']
 
         public_temperature_records = PublicTemperature.query.filter(
-            and_(PublicTemperature.timestamp >= start, PublicTemperature.timestamp <= end)).order_by(PublicTemperature.timestamp).all()
+            and_(PublicTemperature.timestamp >= start,
+                 PublicTemperature.timestamp <= end)).order_by(PublicTemperature.timestamp).all()
 
         return public_temperature_records
 

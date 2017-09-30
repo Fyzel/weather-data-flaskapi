@@ -16,6 +16,7 @@ import unittest
 from json import loads
 import requests
 
+
 class TestCasePublicTemperature(unittest.TestCase):
     @property
     def token(self):

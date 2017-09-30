@@ -59,7 +59,7 @@ def authenticate(username: str, password: str):
             return user
         else:
             return None
-    except Exception as e:
+    except Exception as exception:
         raise JWTError(error='Invalid credential', description='Stop hacking', status_code=401)
 
 
@@ -182,7 +182,7 @@ def update_password(username: str, password: str, new_password: str, salt: str) 
     user = User.query.filter(User.username == username).one()
 
     if sha512_crypt.verify(salt_password(password, salt), user.password):
-        user.password = sha512_crypt.hash(salt_password(password, salt))
+        user.password = sha512_crypt.hash(salt_password(new_password, salt))
         db.session.add(user)
         db.session.commit()
 

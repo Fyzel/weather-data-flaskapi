@@ -42,7 +42,8 @@ class PublicPressureCollection(Resource):
         end = args['end']
 
         public_pressure_records = PublicPressure.query.filter(
-            and_(PublicPressure.timestamp >= start, PublicPressure.timestamp <= end)).order_by(PublicPressure.timestamp).all()
+            and_(PublicPressure.timestamp >= start,
+                 PublicPressure.timestamp <= end)).order_by(PublicPressure.timestamp).all()
 
         return public_pressure_records
 

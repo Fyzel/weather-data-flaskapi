@@ -47,7 +47,8 @@ class ProtectedHumidityCollection(Resource):
         end = args['end']
 
         protected_records = ProtectedHumidity.query.filter(
-            and_(ProtectedHumidity.timestamp >= start, ProtectedHumidity.timestamp <= end)).order_by(ProtectedHumidity.timestamp).all()
+            and_(ProtectedHumidity.timestamp >= start,
+                 ProtectedHumidity.timestamp <= end)).order_by(ProtectedHumidity.timestamp).all()
 
         return protected_records
 
