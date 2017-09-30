@@ -1,3 +1,14 @@
+"""
+@author:     Fyzel@users.noreply.github.com
+
+@copyright:  2017 Englesh.org. All rights reserved.
+
+@license:    https://github.com/Fyzel/weather-data-flaskapi/blob/master/LICENSE
+
+@contact:    Fyzel@users.noreply.github.com
+@deffield    updated: 2017-06-14
+"""
+
 import logging
 
 from flask import request
@@ -6,8 +17,8 @@ from flask_restplus import Resource, reqparse, abort
 from sqlalchemy import and_
 
 from api.restplus import api
-from api.weather_data_api.business.weather_data import create_pressure, delete_pressure, update_pressure
-from api.weather_data_api.serializers import pressure
+from api.weather_data_flaskapi.business.weather_data import create_pressure, delete_pressure, update_pressure
+from api.weather_data_flaskapi.serializers import pressure
 from database.model_exceptions import LatitudeValueError, LongitudeValueError
 from database.models import ProtectedPressure
 

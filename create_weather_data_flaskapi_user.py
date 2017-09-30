@@ -27,7 +27,7 @@ from passlib.hash import sha512_crypt
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, NVARCHAR, BOOLEAN, DATETIME, select
 
 from settings import SQLALCHEMY_DATABASE_URI
-from api.weather_data_api.business.security import salt_password
+from api.weather_data_flaskapi.business.security import salt_password
 
 __all__ = []
 __version__ = 1.1

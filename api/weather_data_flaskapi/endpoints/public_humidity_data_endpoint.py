@@ -1,10 +1,21 @@
+"""
+@author:     Fyzel@users.noreply.github.com
+
+@copyright:  2017 Englesh.org. All rights reserved.
+
+@license:    https://github.com/Fyzel/weather-data-flaskapi/blob/master/LICENSE
+
+@contact:    Fyzel@users.noreply.github.com
+@deffield    updated: 2017-06-14
+"""
+
 import logging
 
 from flask_restplus import Resource, reqparse
 from sqlalchemy import and_
 
 from api.restplus import api
-from api.weather_data_api.serializers import public_humidity
+from api.weather_data_flaskapi.serializers import public_humidity
 from database.models import PublicHumidity
 
 log = logging.getLogger(__name__)
