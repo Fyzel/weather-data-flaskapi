@@ -19,6 +19,7 @@ It defines the methods to create a user with an encrypted and hashed password.
 
 import os
 import sys
+from datetime import datetime
 import uuid
 from argparse import ArgumentParser
 from argparse import RawDescriptionHelpFormatter
@@ -72,7 +73,9 @@ def create_user(db_connection, user_table, username, hashed_password, salt, enab
         username=username,
         password=hashed_password,
         enabled=enable,
-        salt=salt)
+        salt=salt,
+        created_date=datetime.utcnow(),
+        last_login_date=None)
 
     db_connection.execute(insert)
 
