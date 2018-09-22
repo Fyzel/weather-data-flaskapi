@@ -1,4 +1,4 @@
-"""
+'''
 @author:     Fyzel@users.noreply.github.com
 
 @copyright:  2017 Englesh.org. All rights reserved.
@@ -7,7 +7,7 @@
 
 @contact:    Fyzel@users.noreply.github.com
 @deffield    updated: 2017-06-14
-"""
+'''
 
 import json
 import logging
@@ -22,8 +22,8 @@ import requests
 
 
 def get_random_datetime():
-    """Return a random datetime from 0001-01-01 00:00:00.0 to 9999-12-28 23:59:59.999999"""
-    year = random.randint(1, datetime.now().year)
+    '''Return a random datetime from 0001-01-01 00:00:00.0 to 9999-12-28 23:59:59.999999'''
+    year = random.randint(1000, datetime.now().year)
     month = random.randint(1, 12)
     day = random.randint(1, 28)
     hour = random.randint(0, 23)
@@ -40,16 +40,16 @@ def get_random_datetime():
 
 
 def get_random_string(length: int) -> str:
-    """Generate a random string of length.
+    '''Generate a random string of length.
 
     :arg length: The length of the string
     :rtype str
-    """
+    '''
     return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(length))
 
 
 def get_random_record_data():
-    """Generate a random humidity data record"""
+    '''Generate a random humidity data record'''
     value = float('{:.4f}'.format(random.uniform(0, 100.0)))
     value_units = get_random_string(16)
     value_error_range = float('{:.6f}'.format(random.uniform(0.0, 1.0)))
@@ -58,16 +58,19 @@ def get_random_record_data():
     longitude = float('{:.6f}'.format(random.uniform(-180.0, 180.0)))
     elevation = float('{:.4f}'.format(random.uniform(-90.0, 999.0)))
     elevation_units = get_random_string(16)
-    city = get_random_string(64)
-    province = get_random_string(64)
-    country = get_random_string(64)
+    city = 'Edmonton'
+    province = 'AB'
+    country = 'CA'
+
 
     return {
         'value': value,
         'value_units': value_units,
         'value_error_range': value_error_range,
         'latitude': latitude,
+        'latitude_public': float(int(latitude * 1000)) / 1000,
         'longitude': longitude,
+        'longitude_public': float(int(longitude * 1000)) / 1000,
         'elevation': elevation,
         'elevation_units': elevation_units,
         'timestamp': timestamp,
@@ -103,12 +106,12 @@ class TestCaseProtectedHumidity(unittest.TestCase):
         self._last_id = value
 
     def setUp(self):
-        """
+        '''
         Configure these to target the environment being tested. Sample values provided.
-        """
-        self.base_url = 'http://localhost:8888'
+        '''
+        self.base_url = 'http://localhost.localdomain:5000'
         self.context = 'weather'
-        self.resource = 'ProtectedHumidityData'
+        self.resource = 'protected/humidity'
         self.username = 'admin'
         self.password = 'secret'
         self._token = None
@@ -118,8 +121,8 @@ class TestCaseProtectedHumidity(unittest.TestCase):
         pass
 
     def test_step_00_login_fail(self):
-        """Test the login fail capability"""
-        log = logging.getLogger("TestCase.test_step_00_login_fail")
+        '''Test the login fail capability'''
+        log = logging.getLogger('TestCase.test_step_00_login_fail')
         log.info('Start')
 
         auth_url = '{base_url}/auth'.format(
@@ -157,11 +160,11 @@ class TestCaseProtectedHumidity(unittest.TestCase):
         log.info('End')
 
     def test_step_01_login(self):
-        """Test the login capability and setup for the next set of calls"""
-        log = logging.getLogger("TestCase.test_step_01_login")
+        '''Test the login capability and setup for the next set of calls'''
+        log = logging.getLogger('TestCase.test_step_01_login')
         log.info('Start')
 
-        log.debug("base_url= %r", self.base_url)
+        log.debug('base_url= %r', self.base_url)
 
         auth_url = '{base_url}/auth'.format(
             base_url=self.base_url
@@ -206,8 +209,8 @@ class TestCaseProtectedHumidity(unittest.TestCase):
         log.info('End')
 
     def test_step_02_create_record_without_auth(self):
-        """Create a humidity record without JWT token."""
-        log = logging.getLogger("TestCase.test_step_02_create_record_without_auth")
+        '''Create a humidity record without JWT token.'''
+        log = logging.getLogger('TestCase.test_step_02_create_record_without_auth')
         log.info('Start')
 
         app_url = '{base_url}/{context}/{resource}/'.format(
@@ -269,8 +272,8 @@ class TestCaseProtectedHumidity(unittest.TestCase):
         log.info('End')
 
     def test_step_03_create_record_with_auth(self):
-        """Create a humidity record with JWT token."""
-        log = logging.getLogger("TestCase.test_step_03_create_record_with_auth")
+        '''Create a humidity record with JWT token.'''
+        log = logging.getLogger('TestCase.test_step_03_create_record_with_auth')
         log.info('Start')
 
         app_url = '{base_url}/{context}/{resource}/'.format(
@@ -332,7 +335,7 @@ class TestCaseProtectedHumidity(unittest.TestCase):
 
         json_data = json.loads(response.text)
 
-        assert int(json_data['id']) > 0, "Returned id is greater than 0"
+        assert int(json_data['id']) > 0, 'Returned id is greater than 0'
 
         self.assertEqual(
             json_data['value'],
@@ -392,8 +395,8 @@ class TestCaseProtectedHumidity(unittest.TestCase):
         log.info('End')
 
     def test_step_03_1_create_record_with_auth_out_of_range_latitude(self):
-        """Create a humidity record with JWT token but with out of range latitude."""
-        log = logging.getLogger("TestCase.test_step_03_1_create_record_with_auth_out_of_range_latitude")
+        '''Create a humidity record with JWT token but with out of range latitude.'''
+        log = logging.getLogger('TestCase.test_step_03_1_create_record_with_auth_out_of_range_latitude')
         log.info('Start')
 
         app_url = '{base_url}/{context}/{resource}/'.format(
@@ -458,8 +461,8 @@ class TestCaseProtectedHumidity(unittest.TestCase):
         log.info('End')
 
     def test_step_03_2_create_record_with_auth_out_of_range_latitude(self):
-        """Create a humidity record with JWT token but with out of range latitude."""
-        log = logging.getLogger("TestCase.test_step_03_2_create_record_with_auth_out_of_range_latitude")
+        '''Create a humidity record with JWT token but with out of range latitude.'''
+        log = logging.getLogger('TestCase.test_step_03_2_create_record_with_auth_out_of_range_latitude')
         log.info('Start')
 
         app_url = '{base_url}/{context}/{resource}/'.format(
@@ -524,8 +527,8 @@ class TestCaseProtectedHumidity(unittest.TestCase):
         log.info('End')
 
     def test_step_03_3_create_record_with_auth_out_of_range_longitude(self):
-        """Create a humidity record with JWT token but with out of range longitude."""
-        log = logging.getLogger("TestCase.test_step_03_3_create_record_with_auth_out_of_range_longitude")
+        '''Create a humidity record with JWT token but with out of range longitude.'''
+        log = logging.getLogger('TestCase.test_step_03_3_create_record_with_auth_out_of_range_longitude')
         log.info('Start')
 
         app_url = '{base_url}/{context}/{resource}/'.format(
@@ -590,8 +593,8 @@ class TestCaseProtectedHumidity(unittest.TestCase):
         log.info('End')
 
     def test_step_03_4_create_record_with_auth_out_of_range_longitude(self):
-        """Create a humidity record with JWT token but with out of range latitude."""
-        log = logging.getLogger("TestCase.test_step_03_4_create_record_with_auth_out_of_range_longitude")
+        '''Create a humidity record with JWT token but with out of range latitude.'''
+        log = logging.getLogger('TestCase.test_step_03_4_create_record_with_auth_out_of_range_longitude')
         log.info('Start')
 
         app_url = '{base_url}/{context}/{resource}/'.format(
@@ -656,8 +659,8 @@ class TestCaseProtectedHumidity(unittest.TestCase):
         log.info('End')
 
     def test_step_04_get_record_without_auth(self):
-        """Get a humidity record without JWT token."""
-        log = logging.getLogger("TestCase.test_step_04_get_record_without_auth")
+        '''Get a humidity record without JWT token.'''
+        log = logging.getLogger('TestCase.test_step_04_get_record_without_auth')
         log.info('Start')
 
         app_url = '{base_url}/{context}/{resource}/{last_id}'.format(
@@ -686,8 +689,8 @@ class TestCaseProtectedHumidity(unittest.TestCase):
         log.info('End')
 
     def test_step_05_get_record_with_auth(self):
-        """Get a humidity record with JWT token."""
-        log = logging.getLogger("TestCase.test_step_05_get_record_with_auth")
+        '''Get a humidity record with JWT token.'''
+        log = logging.getLogger('TestCase.test_step_05_get_record_with_auth')
         log.info('Start')
 
         app_url = '{base_url}/{context}/{resource}/{last_id}'.format(
@@ -718,7 +721,7 @@ class TestCaseProtectedHumidity(unittest.TestCase):
 
         self.assertEqual(
             int(json_data['id']),
-            int(TestCaseProtectedHumidity.last_id)), "Returned id is the same"
+            int(TestCaseProtectedHumidity.last_id)), 'Returned id is the same'
 
         self.assertEqual(
             json_data['value'],
@@ -775,8 +778,8 @@ class TestCaseProtectedHumidity(unittest.TestCase):
         log.info('End')
 
     def test_step_06_update_record_without_auth(self):
-        """Update a humidity record without JWT token."""
-        log = logging.getLogger("TestCase.test_step_06_update_record_without_auth")
+        '''Update a humidity record without JWT token.'''
+        log = logging.getLogger('TestCase.test_step_06_update_record_without_auth')
         log.info('Start')
 
         app_url = '{base_url}/{context}/{resource}/{last_id}'.format(
@@ -838,8 +841,8 @@ class TestCaseProtectedHumidity(unittest.TestCase):
         log.info('End')
 
     def test_step_07_update_record_with_auth(self):
-        """Update a humidity record with JWT token."""
-        log = logging.getLogger("TestCase.test_step_07_update_record_with_auth")
+        '''Update a humidity record with JWT token.'''
+        log = logging.getLogger('TestCase.test_step_07_update_record_with_auth')
         log.info('Start')
 
         app_url = '{base_url}/{context}/{resource}/{last_id}'.format(
@@ -903,14 +906,14 @@ class TestCaseProtectedHumidity(unittest.TestCase):
         log.info('End')
 
     def test_step_08_get_all_records_without_auth(self):
-        """Get all humidity records without JWT token."""
-        log = logging.getLogger("TestCase.test_step_08_get_all_records_without_auth")
+        '''Get all humidity records without JWT token.'''
+        log = logging.getLogger('TestCase.test_step_08_get_all_records_without_auth')
         log.info('Start')
 
         app_url = '{base_url}/{context}/{resource}/'.format(
             base_url=self.base_url,
             context=self.context,
-            resource=self.resource
+            resource=self.resource,
         )
 
         log.debug('base_url= {url}'.format(url=self.base_url))
@@ -920,7 +923,13 @@ class TestCaseProtectedHumidity(unittest.TestCase):
             'cache-control': 'no-cache'
         }
 
-        querystring = {"start": "0001-01-01", "end": "9999-12-31"}
+        querystring = {
+            "start": "0001-01-01",
+            "end": "9999-12-31",
+            "city": "Edmonton",
+            "province": "AB",
+            "country": "CA"
+        }
 
         response = requests.request('GET', app_url, headers=headers, data='', params=querystring)
 
@@ -939,8 +948,8 @@ class TestCaseProtectedHumidity(unittest.TestCase):
         log.info('End')
 
     def test_step_09_get_all_records_with_auth(self):
-        """Get all humidity records with JWT token."""
-        log = logging.getLogger("TestCase.test_step_09_get_all_records_with_auth")
+        '''Get all humidity records with JWT token.'''
+        log = logging.getLogger('TestCase.test_step_09_get_all_records_with_auth')
         log.info('Start')
 
         app_url = '{base_url}/{context}/{resource}/'.format(
@@ -957,7 +966,13 @@ class TestCaseProtectedHumidity(unittest.TestCase):
             'cache-control': 'no-cache'
         }
 
-        querystring = {"start": "0001-01-01", "end": "9999-12-31"}
+        querystring = {
+            "start": "0001-01-01",
+            "end": "9999-12-31",
+            "city": "Edmonton",
+            "province": "AB",
+            "country": "CA"
+        }
 
         response = requests.request('GET', app_url, headers=headers, data='', params=querystring)
 
@@ -976,8 +991,8 @@ class TestCaseProtectedHumidity(unittest.TestCase):
         log.info('End')
 
     def test_step_10_delete_record_without_auth(self):
-        """Delete a humidity record without JWT token."""
-        log = logging.getLogger("TestCase.test_step_10_delete_record_without_auth")
+        '''Delete a humidity record without JWT token.'''
+        log = logging.getLogger('TestCase.test_step_10_delete_record_without_auth')
         log.info('Start')
 
         app_url = '{base_url}/{context}/{resource}/{last_id}'.format(
@@ -1010,8 +1025,8 @@ class TestCaseProtectedHumidity(unittest.TestCase):
         log.info('End')
 
     def test_step_11_delete_record_with_auth(self):
-        """Delete a humidity record with JWT token."""
-        log = logging.getLogger("TestCase.test_step_11_delete_record_with_auth")
+        '''Delete a humidity record with JWT token.'''
+        log = logging.getLogger('TestCase.test_step_11_delete_record_with_auth')
         log.info('Start')
 
         app_url = '{base_url}/{context}/{resource}/{last_id}'.format(
@@ -1046,8 +1061,8 @@ class TestCaseProtectedHumidity(unittest.TestCase):
         log.info('End')
 
     def test_step_12_get_deleted_record_with_auth(self):
-        """Get a deleted humidity record with JWT token."""
-        log = logging.getLogger("TestCase.test_step_12_get_deleted_record_with_auth")
+        '''Get a deleted humidity record with JWT token.'''
+        log = logging.getLogger('TestCase.test_step_12_get_deleted_record_with_auth')
         log.info('Start')
 
         app_url = '{base_url}/{context}/{resource}/{last_id}'.format(

@@ -16,7 +16,7 @@ from database import db
 from database.model_exceptions import LatitudeValueError, LongitudeValueError
 
 
-class ProtectedHumidity(db.Model):
+class Humidity(db.Model):
     """
     A class that represents the ORM for a humidity reading.
     """
@@ -25,13 +25,13 @@ class ProtectedHumidity(db.Model):
     value = db.Column(db.DECIMAL(precision=8, scale=4), nullable=False)
     value_units = db.Column(db.NVARCHAR(16), nullable=False)
     value_error_range = db.Column(db.DECIMAL(precision=7, scale=6), nullable=False, default=0.0)
-    latitude_public = db.Column(db.DECIMAL(precision=8, scale=6), nullable=False)
     latitude = db.Column(db.DECIMAL(precision=8, scale=6), nullable=False)
-    longitude_public = db.Column(db.DECIMAL(precision=9, scale=6), nullable=False)
+    latitude_public = db.Column(db.DECIMAL(precision=8, scale=6), nullable=False)
     longitude = db.Column(db.DECIMAL(precision=9, scale=6), nullable=False)
+    longitude_public = db.Column(db.DECIMAL(precision=9, scale=6), nullable=False)
     city = db.Column(db.NVARCHAR(64), nullable=False)
-    province = db.Column(db.NVARCHAR(64), nullable=False)
-    country = db.Column(db.NVARCHAR(64), nullable=False)
+    province = db.Column(db.NVARCHAR(2), nullable=False)
+    country = db.Column(db.NVARCHAR(2), nullable=False)
     elevation = db.Column(db.DECIMAL(precision=8, scale=4), nullable=False)
     elevation_units = db.Column(db.NVARCHAR(16), nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False)
@@ -53,9 +53,8 @@ class ProtectedHumidity(db.Model):
         Humidity constructor.
 
         latitude -90 to 90. longitude -180 to 180.
-        latitude_public -90 to 90. longitude_public -180 to 180.
 
-        :rtype: ProtectedHumidity
+        :rtype: Humidity
         :type value: decimal
         :type value_units: str
         :type value_error_range: decimal
@@ -96,12 +95,12 @@ class ProtectedHumidity(db.Model):
 
     def __repr__(self):
         """
-        Return a string representation of the ProtectedHumidity object.
+        Return a string representation of the Humidity object.
 
-        :return: A string representation of the ProtectedHumidity object.
+        :return: A string representation of the Humidity object.
         """
         if self.id is None:
-            return '<ProtectedHumidity: value: {value:f} {value_units} +/- {value_error_range:.2%}\n' + \
+            return '<Humidity: value: {value:f} {value_units} +/- {value_error_range:.2%}\n' + \
                    '           timestamp: {timestamp:%Y-%m-%d %H:%M:%S}\n' + \
                    '           latitude: {latitude:f}\n' + \
                    '           latitude_public: {latitude_public:f}\n' + \
@@ -124,7 +123,7 @@ class ProtectedHumidity(db.Model):
                        elevation_units=self.elevation_units
                    )
         else:
-            return '<ProtectedHumidity: id: {id)}\n' + \
+            return '<Humidity: id: {id}\n' + \
                    '           value: {value:f} {value_units} +/- {value_error_range:.2%}\n' + \
                    '           timestamp: {timestamp:%Y-%m-%d %H:%M:%S}\n' + \
                    '           latitude: {latitude:f}\n' + \
@@ -153,108 +152,7 @@ class ProtectedHumidity(db.Model):
         return self.__repr__()
 
 
-class PublicHumidity(db.Model):
-    """
-    A class that represents the ORM for a public humidity reading.
-    """
-    __tablename__ = 'humidity_public_view'
-    id = db.Column(db.BIGINT(), primary_key=True, autoincrement=True)
-    value = db.Column(db.DECIMAL(precision=8, scale=4), nullable=False)
-    value_units = db.Column(db.NVARCHAR(16), nullable=False)
-    value_error_range = db.Column(db.DECIMAL(precision=7, scale=6), nullable=False, default=0.0)
-    latitude_public = db.Column(db.DECIMAL(precision=8, scale=6), nullable=False)
-    longitude_public = db.Column(db.DECIMAL(precision=9, scale=6), nullable=False)
-    city = db.Column(db.NVARCHAR(64), nullable=False)
-    province = db.Column(db.NVARCHAR(64), nullable=False)
-    country = db.Column(db.NVARCHAR(64), nullable=False)
-    timestamp = db.Column(db.DateTime, nullable=False)
-
-    def __init__(self,
-                 value: decimal,
-                 value_units: str,
-                 value_error_range: decimal,
-                 latitude_public: decimal,
-                 longitude_public: decimal,
-                 city: str,
-                 province: str,
-                 country: str,
-                 timestamp: datetime,
-                 id=None):
-        """
-        HumidityPublic constructor.
-
-        :rtype: PublicHumidity
-        :type value: decimal
-        :type value_units: str
-        :type value_error_range: decimal
-        :type latitude_public: decimal
-        :type longitude_public: decimal
-        :type city: str
-        :type province: str
-        :type country: str
-        :type timestamp: datetime
-        """
-        super().__init__()
-
-        if id is not None:
-            self.id = id
-
-        self.value = value
-        self.value_units = value_units
-        self.value_error_range = value_error_range
-        self.latitude_public = latitude_public
-        self.longitude_public = longitude_public
-        self.city = city
-        self.province = province
-        self.country = country
-        self.timestamp = timestamp
-
-    def __repr__(self):
-        """
-        Return a string representation of the public ProtectedHumidity object.
-
-        :return: A string representation of the public ProtectedHumidity object.
-        """
-        if self.id is None:
-            return '<PublicHumidity: value: {value:f} {value_units} +/- {value_error_range:.2%}\n' + \
-                   '                 timestamp: {timestamp:%Y-%m-%d %H:%M:%S}\n' + \
-                   '                 latitude_public: {latitude_public:f}\n' + \
-                   '                 longitude_public: {longitude_public:f}>\n' + \
-                   '                 location: {city}, {province} {country}>'.format(
-                       value=self.value,
-                       value_units=self.value_units,
-                       value_error_range=self.value_error_range,
-                       timestamp=self.timestamp,
-                       latitude_public=self.latitude_public,
-                       longitude_public=self.longitude_public,
-                       city=self.city,
-                       province=self.province,
-                       country=self.country
-                   )
-        else:
-            return '<PublicHumidity: id: {id)}\n' + \
-                   '                 value: {value:f} {value_units} +/- {value_error_range:.2%}\n' + \
-                   '                 timestamp: {timestamp:%Y-%m-%d %H:%M:%S}\n' + \
-                   '                 latitude_public: {latitude_public:f}\n' + \
-                   '                 longitude_public: {longitude_public:f}>\n' + \
-                   '                 location: {city}, {province} {country}>\n'.format(
-                       id=str(self.id),
-                       value=self.value,
-                       value_units=self.value_units,
-                       value_error_range=self.value_error_range,
-                       timestamp=self.timestamp,
-                       latitude_public=self.latitude_public,
-                       longitude_public=self.longitude_public,
-                       city=self.city,
-                       province=self.province,
-                       country=self.country
-                   )
-
-    def __str__(self):
-        return self.__repr__()
-
-
-class ProtectedPressure(db.Model):
+class Pressure(db.Model):
     """
     A class that represents the ORM for a pressure reading.
     """
@@ -263,13 +161,13 @@ class ProtectedPressure(db.Model):
     value = db.Column(db.DECIMAL(precision=8, scale=4), nullable=False)
     value_units = db.Column(db.NVARCHAR(16), nullable=False)
     value_error_range = db.Column(db.DECIMAL(precision=7, scale=6), nullable=False, default=0.0)
-    latitude_public = db.Column(db.DECIMAL(precision=8, scale=6), nullable=False)
     latitude = db.Column(db.DECIMAL(precision=8, scale=6), nullable=False)
-    longitude_public = db.Column(db.DECIMAL(precision=9, scale=6), nullable=False)
+    latitude_public = db.Column(db.DECIMAL(precision=9, scale=6), nullable=False)
     longitude = db.Column(db.DECIMAL(precision=9, scale=6), nullable=False)
+    longitude_public = db.Column(db.DECIMAL(precision=9, scale=6), nullable=False)
     city = db.Column(db.NVARCHAR(64), nullable=False)
-    province = db.Column(db.NVARCHAR(64), nullable=False)
-    country = db.Column(db.NVARCHAR(64), nullable=False)
+    province = db.Column(db.NVARCHAR(2), nullable=False)
+    country = db.Column(db.NVARCHAR(2), nullable=False)
     elevation = db.Column(db.DECIMAL(precision=8, scale=4), nullable=False)
     elevation_units = db.Column(db.NVARCHAR(16), nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False)
@@ -291,9 +189,8 @@ class ProtectedPressure(db.Model):
         Pressure constructor.
 
         latitude -90 to 90. longitude -180 to 180.
-        latitude_public -90 to 90. longitude_public -180 to 180.
 
-        :rtype: ProtectedPressure
+        :rtype: Pressure
         :type value: decimal
         :type value_units: str
         :type value_error_range: decimal
@@ -334,12 +231,12 @@ class ProtectedPressure(db.Model):
 
     def __repr__(self):
         """
-        Return a string representation of the ProtectedPressure object.
+        Return a string representation of the Pressure object.
 
-        :return: A string representation of the ProtectedPressure object.
+        :return: A string representation of the Pressure object.
         """
         if self.id is None:
-            return '<ProtectedPressure: value: {value:f} {value_units} +/- {value_error_range:.2%}\n' + \
+            return '<Pressure: value: {value:f} {value_units} +/- {value_error_range:.2%}\n' + \
                    '           timestamp: {timestamp:%Y-%m-%d %H:%M:%S}\n' + \
                    '           latitude: {latitude:f}\n' + \
                    '           latitude_public: {latitude_public:f}\n' + \
@@ -362,7 +259,7 @@ class ProtectedPressure(db.Model):
                        elevation_units=self.elevation_units
                    )
         else:
-            return '<ProtectedPressure: id: {id)}\n' + \
+            return '<Pressure: id: {id)}\n' + \
                    '           value: {value:f} {value_units} +/- {value_error_range:.2%}\n' + \
                    '           timestamp: {timestamp:%Y-%m-%d %H:%M:%S}\n' + \
                    '           latitude: {latitude:f}\n' + \
@@ -391,108 +288,7 @@ class ProtectedPressure(db.Model):
         return self.__repr__()
 
 
-class PublicPressure(db.Model):
-    """
-    A class that represents the ORM for a public pressure reading.
-    """
-    __tablename__ = 'pressure_public_view'
-    id = db.Column(db.BIGINT(), primary_key=True, autoincrement=True)
-    value = db.Column(db.DECIMAL(precision=8, scale=4), nullable=False)
-    value_units = db.Column(db.NVARCHAR(16), nullable=False)
-    value_error_range = db.Column(db.DECIMAL(precision=7, scale=6), nullable=False, default=0.0)
-    latitude_public = db.Column(db.DECIMAL(precision=8, scale=6), nullable=False)
-    longitude_public = db.Column(db.DECIMAL(precision=9, scale=6), nullable=False)
-    city = db.Column(db.NVARCHAR(64), nullable=False)
-    province = db.Column(db.NVARCHAR(64), nullable=False)
-    country = db.Column(db.NVARCHAR(64), nullable=False)
-    timestamp = db.Column(db.DateTime, nullable=False)
-
-    def __init__(self,
-                 value: decimal,
-                 value_units: str,
-                 value_error_range: decimal,
-                 latitude_public: decimal,
-                 longitude_public: decimal,
-                 city: str,
-                 province: str,
-                 country: str,
-                 timestamp: datetime,
-                 id=None):
-        """
-        PressurePublic constructor.
-
-        :rtype: PublicPressure
-        :type value: decimal
-        :type value_units: str
-        :type value_error_range: decimal
-        :type latitude_public: decimal
-        :type longitude_public: decimal
-        :type city: str
-        :type province: str
-        :type country: str
-        :type timestamp: datetime
-        """
-        super().__init__()
-
-        if id is not None:
-            self.id = id
-
-        self.value = value
-        self.value_units = value_units
-        self.value_error_range = value_error_range
-        self.latitude_public = latitude_public
-        self.longitude_public = longitude_public
-        self.city = city
-        self.province = province
-        self.country = country
-        self.timestamp = timestamp
-
-    def __repr__(self):
-        """
-        Return a string representation of the public ProtectedPressure object.
-
-        :return: A string representation of the public ProtectedPressure object.
-        """
-        if self.id is None:
-            return '<PublicPressure: value: {value:f} {value_units} +/- {value_error_range:.2%}\n' + \
-                   '                 timestamp: {timestamp:%Y-%m-%d %H:%M:%S}\n' + \
-                   '                 latitude_public: {latitude_public:f}\n' + \
-                   '                 longitude_public: {longitude_public:f}>\n' + \
-                   '                 location: {city}, {province} {country}>'.format(
-                       value=self.value,
-                       value_units=self.value_units,
-                       value_error_range=self.value_error_range,
-                       timestamp=self.timestamp,
-                       latitude_public=self.latitude_public,
-                       longitude_public=self.longitude_public,
-                       city=self.city,
-                       province=self.province,
-                       country=self.country
-                   )
-        else:
-            return '<PublicPressure: id: {id)}\n' + \
-                   '                 value: {value:f} {value_units} +/- {value_error_range:.2%}\n' + \
-                   '                 timestamp: {timestamp:%Y-%m-%d %H:%M:%S}\n' + \
-                   '                 latitude_public: {latitude_public:f}\n' + \
-                   '                 longitude_public: {longitude_public:f}>\n' + \
-                   '                 location: {city}, {province} {country}>\n'.format(
-                       id=str(self.id),
-                       value=self.value,
-                       value_units=self.value_units,
-                       value_error_range=self.value_error_range,
-                       timestamp=self.timestamp,
-                       latitude_public=self.latitude_public,
-                       longitude_public=self.longitude_public,
-                       city=self.city,
-                       province=self.province,
-                       country=self.country
-                   )
-
-    def __str__(self):
-        return self.__repr__()
-
-
-class ProtectedTemperature(db.Model):
+class Temperature(db.Model):
     """
     A class that represents the ORM for a temperature reading.
     """
@@ -501,13 +297,13 @@ class ProtectedTemperature(db.Model):
     value = db.Column(db.DECIMAL(precision=8, scale=4), nullable=False)
     value_units = db.Column(db.NVARCHAR(16), nullable=False)
     value_error_range = db.Column(db.DECIMAL(precision=7, scale=6), nullable=False, default=0.0)
-    latitude_public = db.Column(db.DECIMAL(precision=8, scale=6), nullable=False)
     latitude = db.Column(db.DECIMAL(precision=8, scale=6), nullable=False)
-    longitude_public = db.Column(db.DECIMAL(precision=9, scale=6), nullable=False)
+    latitude_public = db.Column(db.DECIMAL(precision=8, scale=6), nullable=False)
     longitude = db.Column(db.DECIMAL(precision=9, scale=6), nullable=False)
+    longitude_public = db.Column(db.DECIMAL(precision=9, scale=6), nullable=False)
     city = db.Column(db.NVARCHAR(64), nullable=False)
-    province = db.Column(db.NVARCHAR(64), nullable=False)
-    country = db.Column(db.NVARCHAR(64), nullable=False)
+    province = db.Column(db.NVARCHAR(2), nullable=False)
+    country = db.Column(db.NVARCHAR(2), nullable=False)
     elevation = db.Column(db.DECIMAL(precision=8, scale=4), nullable=False)
     elevation_units = db.Column(db.NVARCHAR(16), nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False)
@@ -526,12 +322,12 @@ class ProtectedTemperature(db.Model):
                  timestamp: datetime,
                  id=None):
         """
-        ProtectedTemperature constructor.
+        Temperature constructor.
 
         latitude -90 to 90. longitude -180 to 180.
         latitude_public -90 to 90. longitude_public -180 to 180.
 
-        :rtype: ProtectedHumidity
+        :rtype: Temperature
         :type value: decimal
         :type value_units: str
         :type value_error_range: decimal
@@ -572,12 +368,12 @@ class ProtectedTemperature(db.Model):
 
     def __repr__(self) -> str:
         """
-        Return a string representation of the ProtectedTemperature object.
+        Return a string representation of the Temperature object.
 
-        :return: A string representation of the ProtectedTemperature object.
+        :return: A string representation of the Temperature object.
         """
         if self.id is None:
-            return '<ProtectedTemperature: value: {value:f} {value_units} +/- {value_error_range:.2%}\n' + \
+            return '<Temperature: value: {value:f} {value_units} +/- {value_error_range:.2%}\n' + \
                    '              timestamp: {timestamp:%Y-%m-%d %H:%M:%S}\n' + \
                    '              latitude: {latitude:f}\n' + \
                    '              latitude_public: {latitude_public:f}\n' + \
@@ -600,7 +396,7 @@ class ProtectedTemperature(db.Model):
                        elevation_units=self.elevation_units
                    )
         else:
-            return '<ProtectedTemperature: id: {id)}\n' + \
+            return '<Temperature: id: {id}\n' + \
                    '              value: {value:f} {value_units} +/- {value_error_range:.2%}\n' + \
                    '              timestamp: {timestamp:%Y-%m-%d %H:%M:%S}\n' + \
                    '              latitude: {latitude:f}\n' + \
@@ -623,107 +419,6 @@ class ProtectedTemperature(db.Model):
                        country=self.country,
                        elevation=self.elevation,
                        elevation_units=self.elevation_units
-                   )
-
-    def __str__(self):
-        return self.__repr__()
-
-
-class PublicTemperature(db.Model):
-    """
-    A class that represents the ORM for a public temperature reading.
-    """
-    __tablename__ = 'temperature_public_view'
-    id = db.Column(db.BIGINT(), primary_key=True, autoincrement=True)
-    value = db.Column(db.DECIMAL(precision=8, scale=4), nullable=False)
-    value_units = db.Column(db.NVARCHAR(16), nullable=False)
-    value_error_range = db.Column(db.DECIMAL(precision=7, scale=6), nullable=False, default=0.0)
-    latitude_public = db.Column(db.DECIMAL(precision=8, scale=6), nullable=False)
-    longitude_public = db.Column(db.DECIMAL(precision=9, scale=6), nullable=False)
-    city = db.Column(db.NVARCHAR(64), nullable=False)
-    province = db.Column(db.NVARCHAR(64), nullable=False)
-    country = db.Column(db.NVARCHAR(64), nullable=False)
-    timestamp = db.Column(db.DateTime, nullable=False)
-
-    def __init__(self,
-                 value: decimal,
-                 value_units: str,
-                 value_error_range: decimal,
-                 latitude_public: decimal,
-                 longitude_public: decimal,
-                 city: str,
-                 province: str,
-                 country: str,
-                 timestamp: datetime,
-                 id=None):
-        """
-        TemperaturePublic constructor.
-
-        :rtype: PublicTemperature
-        :type value: decimal
-        :type value_units: str
-        :type value_error_range: decimal
-        :type latitude_public: decimal
-        :type longitude_public: decimal
-        :type city: str
-        :type province: str
-        :type country: str
-        :type timestamp: datetime
-        """
-        super().__init__()
-
-        if id is not None:
-            self.id = id
-
-        self.value = value
-        self.value_units = value_units
-        self.value_error_range = value_error_range
-        self.latitude_public = latitude_public
-        self.longitude_public = longitude_public
-        self.city = city
-        self.province = province
-        self.country = country
-        self.timestamp = timestamp
-
-    def __repr__(self):
-        """
-        Return a string representation of the public ProtectedTemperature object.
-
-        :return: A string representation of the public ProtectedTemperature object.
-        """
-        if self.id is None:
-            return '<PublicTemperature: value: {value:f} {value_units} +/- {value_error_range:.2%}\n' + \
-                   '                    timestamp: {timestamp:%Y-%m-%d %H:%M:%S}\n' + \
-                   '                    latitude_public: {latitude_public:f}\n' + \
-                   '                    longitude_public: {longitude_public:f}>\n' + \
-                   '                    location: {city}, {province} {country}>'.format(
-                       value=self.value,
-                       value_units=self.value_units,
-                       value_error_range=self.value_error_range,
-                       timestamp=self.timestamp,
-                       latitude_public=self.latitude_public,
-                       longitude_public=self.longitude_public,
-                       city=self.city,
-                       province=self.province,
-                       country=self.country
-                   )
-        else:
-            return '<PublicTemperature: id: {id)}\n' + \
-                   '                    value: {value:f} {value_units} +/- {value_error_range:.2%}\n' + \
-                   '                    timestamp: {timestamp:%Y-%m-%d %H:%M:%S}\n' + \
-                   '                    latitude_public: {latitude_public:f}\n' + \
-                   '                    longitude_public: {longitude_public:f}>\n' + \
-                   '                    location: {city}, {province} {country}>\n'.format(
-                       id=str(self.id),
-                       value=self.value,
-                       value_units=self.value_units,
-                       value_error_range=self.value_error_range,
-                       timestamp=self.timestamp,
-                       latitude_public=self.latitude_public,
-                       longitude_public=self.longitude_public,
-                       city=self.city,
-                       province=self.province,
-                       country=self.country
                    )
 
     def __str__(self):

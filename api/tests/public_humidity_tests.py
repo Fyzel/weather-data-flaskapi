@@ -1,4 +1,4 @@
-"""
+'''
 @author:     Fyzel@users.noreply.github.com
 
 @copyright:  2017 Englesh.org. All rights reserved.
@@ -7,7 +7,7 @@
 
 @contact:    Fyzel@users.noreply.github.com
 @deffield    updated: 2017-06-14
-"""
+'''
 
 import json
 import logging
@@ -43,19 +43,19 @@ class TestCasePublicHumidity(unittest.TestCase):
         self._last_id = value
 
     def setUp(self):
-        """
+        '''
         Configure these to target the environment being tested. Sample values provided.
-        """
-        self.base_url = 'http://localhost:8888'
+        '''
+        self.base_url = 'http://localhost.localdomain:5000'
         self.context = 'weather'
-        self.resource = 'PublicHumidityData'
+        self.resource = 'public/humidity'
 
     def tearDown(self):
         pass
 
     def test_step_00_get_all_records_without_auth(self):
-        """Get all records without JWT token."""
-        log = logging.getLogger("TestCase.test_step_00_get_all_records_without_auth")
+        '''Get all records without JWT token.'''
+        log = logging.getLogger('TestCase.test_step_00_get_all_records_without_auth')
         log.info('Start')
 
         app_url = '{base_url}/{context}/{resource}/'.format(
@@ -71,7 +71,13 @@ class TestCasePublicHumidity(unittest.TestCase):
             'cache-control': 'no-cache'
         }
 
-        querystring = {"start": "0001-01-01", "end": "9999-12-31"}
+        querystring = {
+            'start': '0001-01-01',
+            'end': '9999-12-31',
+            'city': 'Edmonton',
+            'province': 'AB',
+            'country': 'CA'
+        }
 
         response = requests.request('GET', app_url, headers=headers, data='', params=querystring)
 
@@ -92,8 +98,8 @@ class TestCasePublicHumidity(unittest.TestCase):
         log.info('End')
 
     def test_step_01_get_record_without_auth(self):
-        """Get a public record without JWT token."""
-        log = logging.getLogger("TestCase.test_step_01_get_record_without_auth")
+        '''Get a public record without JWT token.'''
+        log = logging.getLogger('TestCase.test_step_01_get_record_without_auth')
         log.info('Start')
 
         if TestCasePublicHumidity.last_id is not None:

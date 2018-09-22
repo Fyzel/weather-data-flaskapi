@@ -10,15 +10,15 @@
 """
 
 from database import db
-from database.models import ProtectedHumidity, ProtectedPressure, ProtectedTemperature
+from database.models import Humidity, Pressure, Temperature
 
 
-def create_humidity(data) -> ProtectedHumidity:
+def create_humidity(data) -> Humidity:
     """
     Creates a new humidity record in the database.
 
-    :param data: JSON data for a new ProtectedHumidity object.
-    :return: ProtectedHumidity
+    :param data: JSON data for a new Humidity object.
+    :return: Humidity
     """
     value = data.get('value')
     value_units = data.get('value_units')
@@ -32,17 +32,17 @@ def create_humidity(data) -> ProtectedHumidity:
     elevation_units = data.get('elevation_units')
     timestamp = data.get('timestamp')
 
-    humidity = ProtectedHumidity(value=value,
-                                 value_units=value_units,
-                                 value_error_range=value_error_range,
-                                 latitude=latitude,
-                                 longitude=longitude,
-                                 city=city,
-                                 province=province,
-                                 country=country,
-                                 elevation=elevation,
-                                 elevation_units=elevation_units,
-                                 timestamp=timestamp)
+    humidity = Humidity(value=value,
+                        value_units=value_units,
+                        value_error_range=value_error_range,
+                        latitude=latitude,
+                        longitude=longitude,
+                        city=city,
+                        province=province,
+                        country=country,
+                        elevation=elevation,
+                        elevation_units=elevation_units,
+                        timestamp=timestamp)
 
     db.session.add(humidity)
     db.session.commit()
@@ -50,20 +50,22 @@ def create_humidity(data) -> ProtectedHumidity:
     return humidity
 
 
-def update_humidity(humidity_id: int, data) -> ProtectedHumidity:
+def update_humidity(humidity_id: int, data) -> Humidity:
     """
     Update a humidity record in the database.
 
     :param humidity_id: The humidity record identifier.
-    :param data: Updated JSON data for an existing ProtectedHumidity object.
-    :return: ProtectedHumidity
+    :param data: Updated JSON data for an existing Humidity object.
+    :return: Humidity
     """
-    humidity = ProtectedHumidity.query.filter(ProtectedHumidity.id == humidity_id).one()
+    humidity = Humidity.query.filter(Humidity.id == humidity_id).one()
     humidity.value = data.get('value')
     humidity.value_units = data.get('value_units')
     humidity.value_error_range = data.get('value_error_range')
     humidity.latitude = data.get('latitude')
+    humidity.latitude_public_public = float(int(humidity.latitude * 1000)) / 1000
     humidity.longitude = data.get('longitude')
+    humidity.longitude_public = float(int(humidity.longitude * 1000)) / 1000
     humidity.city = data.get('city')
     humidity.province = data.get('province')
     humidity.country = data.get('country')
@@ -84,17 +86,17 @@ def delete_humidity(humidity_id: int):
     :param humidity_id: The humidity record identifier.
     :return: None
     """
-    humidity = ProtectedHumidity.query.filter(ProtectedHumidity.id == humidity_id).one()
+    humidity = Humidity.query.filter(Humidity.id == humidity_id).one()
     db.session.delete(humidity)
     db.session.commit()
 
 
-def create_pressure(data) -> ProtectedPressure:
+def create_pressure(data) -> Pressure:
     """
     Creates a new pressure record in the database.
 
-    :param data: JSON data for a new ProtectedPressure object.
-    :return: ProtectedPressure
+    :param data: JSON data for a new Pressure object.
+    :return: Pressure
     """
     value = data.get('value')
     value_units = data.get('value_units')
@@ -108,17 +110,17 @@ def create_pressure(data) -> ProtectedPressure:
     elevation_units = data.get('elevation_units')
     timestamp = data.get('timestamp')
 
-    pressure = ProtectedPressure(value=value,
-                                 value_units=value_units,
-                                 value_error_range=value_error_range,
-                                 latitude=latitude,
-                                 longitude=longitude,
-                                 city=city,
-                                 province=province,
-                                 country=country,
-                                 elevation=elevation,
-                                 elevation_units=elevation_units,
-                                 timestamp=timestamp)
+    pressure = Pressure(value=value,
+                        value_units=value_units,
+                        value_error_range=value_error_range,
+                        latitude=latitude,
+                        longitude=longitude,
+                        city=city,
+                        province=province,
+                        country=country,
+                        elevation=elevation,
+                        elevation_units=elevation_units,
+                        timestamp=timestamp)
 
     db.session.add(pressure)
     db.session.commit()
@@ -126,20 +128,22 @@ def create_pressure(data) -> ProtectedPressure:
     return pressure
 
 
-def update_pressure(pressure_id: int, data) -> ProtectedPressure:
+def update_pressure(pressure_id: int, data) -> Pressure:
     """
     Update a pressure record in the database.
 
     :param pressure_id: The pressure record identifier.
-    :param data: Updated JSON data for an existing ProtectedPressure object.
-    :return: ProtectedPressure
+    :param data: Updated JSON data for an existing Pressure object.
+    :return: Pressure
     """
-    pressure = ProtectedPressure.query.filter(ProtectedPressure.id == pressure_id).one()
+    pressure = Pressure.query.filter(Pressure.id == pressure_id).one()
     pressure.value = data.get('value')
     pressure.value_units = data.get('value_units')
     pressure.value_error_range = data.get('value_error_range')
     pressure.latitude = data.get('latitude')
+    pressure.latitude_public_public = float(int(pressure.latitude * 1000)) / 1000
     pressure.longitude = data.get('longitude')
+    pressure.longitude_public = float(int(pressure.longitude * 1000)) / 1000
     pressure.city = data.get('city')
     pressure.province = data.get('province')
     pressure.country = data.get('country')
@@ -160,17 +164,17 @@ def delete_pressure(pressure_id: int):
     :param pressure_id: The pressure record identifier.
     :return: None
     """
-    pressure = ProtectedPressure.query.filter(ProtectedPressure.id == pressure_id).one()
+    pressure = Pressure.query.filter(Pressure.id == pressure_id).one()
     db.session.delete(pressure)
     db.session.commit()
 
 
-def create_temperature(data) -> ProtectedTemperature:
+def create_temperature(data) -> Temperature:
     """
     Creates a new temperature record in the database.
 
-    :param data: JSON data for a new ProtectedTemperature object.
-    :return: ProtectedTemperature
+    :param data: JSON data for a new Temperature object.
+    :return: Temperature
     """
     value = data.get('value')
     value_units = data.get('value_units')
@@ -184,17 +188,17 @@ def create_temperature(data) -> ProtectedTemperature:
     elevation_units = data.get('elevation_units')
     timestamp = data.get('timestamp')
 
-    temperature = ProtectedTemperature(value=value,
-                                       value_units=value_units,
-                                       value_error_range=value_error_range,
-                                       latitude=latitude,
-                                       longitude=longitude,
-                                       city=city,
-                                       province=province,
-                                       country=country,
-                                       elevation=elevation,
-                                       elevation_units=elevation_units,
-                                       timestamp=timestamp)
+    temperature = Temperature(value=value,
+                              value_units=value_units,
+                              value_error_range=value_error_range,
+                              latitude=latitude,
+                              longitude=longitude,
+                              city=city,
+                              province=province,
+                              country=country,
+                              elevation=elevation,
+                              elevation_units=elevation_units,
+                              timestamp=timestamp)
 
     db.session.add(temperature)
     db.session.commit()
@@ -202,20 +206,22 @@ def create_temperature(data) -> ProtectedTemperature:
     return temperature
 
 
-def update_temperature(temperature_id: int, data) -> ProtectedTemperature:
+def update_temperature(temperature_id: int, data) -> Temperature:
     """
     Update a temperature record in the database.
 
     :param temperature_id: The temperature record identifier.
-    :param data: Updated JSON data for an existing ProtectedTemperature object.
-    :return: ProtectedTemperature
+    :param data: Updated JSON data for an existing Temperature object.
+    :return: Temperature
     """
-    temperature = ProtectedTemperature.query.filter(ProtectedTemperature.id == temperature_id).one()
+    temperature = Temperature.query.filter(Temperature.id == temperature_id).one()
     temperature.value = data.get('value')
     temperature.value_units = data.get('value_units')
     temperature.value_error_range = data.get('value_error_range')
     temperature.latitude = data.get('latitude')
+    temperature.latitude_public_public = float(int(temperature.latitude * 1000)) / 1000
     temperature.longitude = data.get('longitude')
+    temperature.longitude_public = float(int(temperature.longitude * 1000)) / 1000
     temperature.city = data.get('city')
     temperature.province = data.get('province')
     temperature.country = data.get('country')
@@ -236,6 +242,6 @@ def delete_temperature(temperature_id: int):
     :param temperature_id: The temperature record identifier.
     :return: None
     """
-    temperature = ProtectedTemperature.query.filter(ProtectedTemperature.id == temperature_id).one()
+    temperature = Temperature.query.filter(Temperature.id == temperature_id).one()
     db.session.delete(temperature)
     db.session.commit()
