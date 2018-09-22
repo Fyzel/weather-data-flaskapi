@@ -14,7 +14,7 @@ from flask_restplus import fields
 from api.restplus import api
 
 humidity = api.model(
-    'ProtectedHumidity',
+    'Humidity',
     {
         'id': fields.Integer(
             readOnly=True,
@@ -44,6 +44,10 @@ humidity = api.model(
             required=True,
             readOnly=True,
             description='The longitude of the reading'),
+        'longitude_public': fields.Float(
+            required=True,
+            readOnly=True,
+            description='The public longitude of the reading'),
         'city': fields.String(
             required=True,
             readOnly=True,
@@ -56,10 +60,6 @@ humidity = api.model(
             required=True,
             readOnly=True,
             description='The record''s country.'),
-        'longitude_public': fields.Float(
-            required=True,
-            readOnly=True,
-            description='The public longitude of the reading'),
         'elevation': fields.Float(
             required=True,
             readOnly=True,
@@ -76,7 +76,7 @@ humidity = api.model(
     })
 
 public_humidity = api.model(
-    'PublicHumidity',
+    'Humidity',
     {
         'id': fields.Integer(
             readOnly=True,
@@ -121,7 +121,7 @@ public_humidity = api.model(
     })
 
 pressure = api.model(
-    'ProtectedPressure',
+    'Pressure',
     {
         'id': fields.Integer(
             readOnly=True,
@@ -151,6 +151,10 @@ pressure = api.model(
             required=True,
             readOnly=True,
             description='The longitude of the reading'),
+        'longitude_public': fields.Float(
+            required=True,
+            readOnly=True,
+            description='The public longitude of the reading'),
         'city': fields.String(
             required=True,
             readOnly=True,
@@ -163,10 +167,6 @@ pressure = api.model(
             required=True,
             readOnly=True,
             description='The record''s country.'),
-        'longitude_public': fields.Float(
-            required=True,
-            readOnly=True,
-            description='The public longitude of the reading'),
         'elevation': fields.Float(
             required=True,
             readOnly=True,
@@ -183,7 +183,7 @@ pressure = api.model(
     })
 
 public_pressure = api.model(
-    'PublicPressure',
+    'Pressure',
     {
         'id': fields.Integer(
             readOnly=True,
@@ -228,7 +228,7 @@ public_pressure = api.model(
     })
 
 temperature = api.model(
-    'ProtectedTemperature',
+    'Temperature',
     {
         'id': fields.Integer(
             readOnly=True,
@@ -258,6 +258,10 @@ temperature = api.model(
             required=True,
             readOnly=True,
             description='The longitude of the reading'),
+        'longitude_public': fields.Float(
+            required=True,
+            readOnly=True,
+            description='The public longitude of the reading'),
         'city': fields.String(
             required=True,
             readOnly=True,
@@ -270,10 +274,6 @@ temperature = api.model(
             required=True,
             readOnly=True,
             description='The record''s country.'),
-        'longitude_public': fields.Float(
-            required=True,
-            readOnly=True,
-            description='The public longitude of the reading'),
         'elevation': fields.Float(
             required=True,
             readOnly=True,
@@ -290,7 +290,7 @@ temperature = api.model(
     })
 
 public_temperature = api.model(
-    'PublicTemperature',
+    'Temperature',
     {
         'id': fields.Integer(
             readOnly=True,
