@@ -18,7 +18,7 @@ passlib==1.7.1
 PyJWT==1.6.4
 python-dateutil==2.7.3
 pytz==2018.5
-requests==2.19.1
+requests==2.20.1
 six==1.11.0
 SQLAlchemy==1.2.14
 urllib3==1.23
