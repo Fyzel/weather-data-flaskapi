@@ -3,7 +3,7 @@ appdirs==1.4.3
 certifi==2018.11.29
 chardet==3.0.4
 click==7.0
-configparser==3.7.1
+configparser==3.7.3
 Flask==1.0.2
 Flask-JWT==0.3.2
 flask-restplus==0.12.1
@@ -12,7 +12,7 @@ idna==2.8
 itsdangerous==1.1.0
 Jinja2==2.10
 jsonschema==3.0.1
-MarkupSafe==1.1.0
+MarkupSafe==1.1.1
 mysqlclient==1.4.2.post1
 passlib==1.7.1
 PyJWT==1.7.1
