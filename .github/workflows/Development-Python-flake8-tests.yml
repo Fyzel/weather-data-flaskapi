@@ -33,4 +33,16 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pytest
+        pytest --import-mode=append tests/
+    - name: Set Git config
+      run: |
+        git config --local user.email "actions@github.com"
+        git config --local user.name "Github Actions"
+    - name: Merge development to test
+      run: |
+        # when development branch tests are successful merge to the test branch
+        git fetch --unshallow
+        git checkout test
+        git pull
+        git merge --no-ff development -m "Auto-merge development to test"
+        git push
