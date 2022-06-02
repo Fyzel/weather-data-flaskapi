@@ -7,4 +7,4 @@ There will be a user interface for dsplaying current and historic humidity, pres
 
 ![Architecture Diagram][architecture]
 
-[architecture]: https://github.com/Fyzel/weather-data-flaskapi/blob/master/static/images/architecture.png
+[architecture]: https://github.com/Fyzel/weather-data-flaskapi/blob/master/static/images/architecture.png?raw=true
