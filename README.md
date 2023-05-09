@@ -5,6 +5,4 @@ This API is intended to receive humidity, pressure, and temperature from weather
 
 There will be a user interface for dsplaying current and historic humidity, pressure, and temperature data.
 
-![Architecture Diagram][architecture]
-
-[architecture]: https://github.com/Fyzel/weather-data-flaskapi/blob/master/static/images/architecture.png?raw=true
+![Architecture Diagram][/docs/assets/images/architecture.png]
