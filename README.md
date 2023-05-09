@@ -5,4 +5,4 @@ This API is intended to receive humidity, pressure, and temperature from weather
 
 There will be a user interface for dsplaying current and historic humidity, pressure, and temperature data.
 
-![Architecture Diagram][/docs/assets/images/architecture.png]
+![Architecture Diagram](/docs/assets/images/architecture.png)
