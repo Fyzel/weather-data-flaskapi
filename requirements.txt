@@ -8,7 +8,7 @@ Flask==3.0.3
 Flask-JWT==0.3.2
 flask-restplus==0.13.0
 Flask-SQLAlchemy==3.1.1
-idna==3.7
+idna==3.10
 itsdangerous==2.2.0
 Jinja2==3.1.4
 jsonschema==4.23.0
@@ -21,5 +21,5 @@ pytz==2024.2
 requests==2.32.3
 six==1.16.0
 SQLAlchemy==2.0.35
+urllib3==2.2.3
 Werkzeug==3.0.4
-urllib3==2.2.2
